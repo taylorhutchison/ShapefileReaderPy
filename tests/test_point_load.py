@@ -1,5 +1,5 @@
 """
-File description
+
 """
 
 __author__ = 'Sean Taylor Hutchison'
@@ -12,6 +12,7 @@ __status__ = 'Development'
 import unittest
 from ShapefileReader import Shapefile
 
+
 class LoadPointFile(unittest.TestCase):
 
     point_file = Shapefile(r"data/Point.shp")
@@ -21,12 +22,12 @@ class LoadPointFile(unittest.TestCase):
         self.assertEqual(len(self.point_file.Records), 26)
 
     def test_ShapeTypeIsPoint(self):
-        self.assertEqual(self.point_file.Shapetype,Shapefile.Shape.Point)
+        self.assertEqual(self.point_file.Shapetype, Shapefile.Shape.Point)
 
     def test_MainHeaderRecord(self):
-        self.assertEqual(self.point_file.Header['filecode'],9994)
-        self.assertEqual(self.point_file.Header['version'],1000)
-        self.assertGreater(self.point_file.Header['length'],50)
+        self.assertEqual(self.point_file.Header['filecode'], 9994)
+        self.assertEqual(self.point_file.Header['version'], 1000)
+        self.assertGreater(self.point_file.Header['length'], 50)
 
 if __name__ == '__main__':
     unittest.main()
