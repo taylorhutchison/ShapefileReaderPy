@@ -29,6 +29,21 @@ __status__ = 'Development'
 
 class ShapefileIndex:
 
+    Records = []
+
+    def __bytes_to_index_records(self,file_bytes):
+        file_length = len(file_bytes)
+        num_records = int((file_length - 100) / 8)
+        for record_counter in range(0,num_records):
+            byte_position = 100 + (record_counter * 8)
+            offset = int.from_bytes(file_bytes[byte_position:byte_position+4], byteorder='big')
+            length = int.from_bytes(file_bytes[byte_position+4:byte_position+8], byteorder='big')
+            self.Records.append([offset,length])
+
+    def read(self):
+        with open(self.Path, 'rb') as shpindex:
+            self.__bytes_to_index_records(shpindex.read())
+
     def __init__(self, path=None):
         if path and os.path.exists(path) and os.path.splitext(path)[1] == '.shx':
             self.Path = path
