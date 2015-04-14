@@ -17,7 +17,6 @@ The 'shx' object will expose three properties
 """
 
 import os
-import struct
 
 __author__ = 'Sean Taylor Hutchison'
 __license__ = 'MIT'
