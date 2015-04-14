@@ -15,7 +15,7 @@ from ShapefileReader import Shapefile
 
 class LoadPointFile(unittest.TestCase):
 
-    point_file = Shapefile(r"data/Point.shp")
+    point_file = Shapefile(r"../data/Point.shp")
     point_file.read()
 
     def test_NumberOfRecords(self):

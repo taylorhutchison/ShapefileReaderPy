@@ -15,7 +15,7 @@ from ShapefileReader import Shapefile
 
 class LoadPolylineFile(unittest.TestCase):
 
-    polyline_file = Shapefile(r"data/Polyline.shp")
+    polyline_file = Shapefile(r"../data/Polyline.shp")
     polyline_file.read()
 
     filecode = 9994

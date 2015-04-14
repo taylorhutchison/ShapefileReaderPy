@@ -15,7 +15,7 @@ from ShapefileReader import Shapefile
 
 class LoadMultipointFile(unittest.TestCase):
 
-    multipoint_file = Shapefile(r"data/Multipoint.shp")
+    multipoint_file = Shapefile(r"../data/Multipoint.shp")
     multipoint_file.read()
 
     filecode = 9994
