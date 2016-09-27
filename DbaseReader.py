@@ -17,6 +17,7 @@ The 'dbf' object will expose a two properties and one method
 
 import os
 import struct
+from collections import OrderedDict
 
 __author__ = 'Sean Taylor Hutchison'
 __license__ = 'MIT'
@@ -29,26 +30,48 @@ __status__ = 'Development'
 class Dbase:
 
     Path = None
+    Attributes = OrderedDict()
+
+    class Attribute:
+        def __init__(self, name=None, type=None):
+            self.name = name
+            self.type = type
+
+    def get_date(header_bytes):
+        year = (int.from_bytes(header_bytes[1:2], byteorder='little')) + 1900
+        month = (int.from_bytes(header_bytes[2:3], byteorder='little'))
+        day = (int.from_bytes(header_bytes[3:4], byteorder='little'))
+        return str(day) + "/" + str(month) + "/" + str(year)
+
 
     def read(self):
          with open(self.Path, 'rb') as dbasefile:
-             file_bytes = dbasefile.read(800)
+             file_bytes = dbasefile.read(32)
              version = int.from_bytes(file_bytes[0:1], byteorder='big')
              dbase_version = int(str((version >> 0) & 1) + str((version >> 1) & 1),2)
-             year = (int.from_bytes(file_bytes[1:2], byteorder='little'))
-             month = (int.from_bytes(file_bytes[2:3], byteorder='little'))
-             day = (int.from_bytes(file_bytes[3:4], byteorder='little'))
+             last_modified = get_date(file_bytes)
              record_count = int.from_bytes(file_bytes[4:8], byteorder='little')
              header_bytes = int.from_bytes(file_bytes[8:10], byteorder='little')
-             record_bytes = int.from_bytes(file_bytes[10:12], byteorder='little')
-             for i in range(0,20):
-                jump = 32
-                start = 30 + (jump * i)
-                first_record = file_bytes[start:(start+jump)]
+             bytes_per_record = int.from_bytes(file_bytes[10:12], byteorder='little')
+             file_bytes = dbasefile.read(header_bytes-32)
+             record_count = int((header_bytes-33)/32)
+             for i in range(0,record_count):
+                size = 32
+                start = size * i
+                record = file_bytes[start:(start+size)]
                 name = ''
-                for b in first_record[0:11]:
+                type = ''
+                for b in record[0:11]:
                     name = name + chr(b)
-                print(name)
+                type = chr(record[11])
+                self.Attributes[name] = Dbase.Attribute(name, type)
+             field_names = list(self.Attributes.items())
+             file_bytes = dbasefile.read(record_bytes)
+             for i in range(0, record_count):
+                 size = 32
+                 start = size * i
+                 record = file_bytes[start:(start+size)]
+                 key = field_names[i][0]
 
 
     def __init__(self, path=None):
